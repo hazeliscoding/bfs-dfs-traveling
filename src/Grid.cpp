@@ -188,6 +188,19 @@ void Grid::SetDefaultSelections()
     this->m_algoSelection->setCurrentIndex(0);
 }
 
+int Grid::TracePath(Node* lastNode, QStack<int>* nodeStack)
+{
+	auto count = 0;
+	while (lastNode != nullptr)
+	{
+		lastNode->TracePath();
+		nodeStack->push(lastNode->GetId());
+		lastNode = lastNode->GetPreviousNode();
+		count++;
+	}
+	return count;
+}
+
 void Grid::Render()
 {
     AddItemsToScene();
@@ -247,4 +260,19 @@ void Grid::ResetGrid()
 void Grid::ClearGrid()
 {
     // TODO: Implement clearing the whole grid
+}
+
+void Grid::DisplayResults(Node* node)
+{
+	// Trace the path
+	if (node != nullptr)
+	{
+		const auto path = new QStack<int>();
+		const auto pathLength = TracePath(node, path);
+		qDebug() << "Length of the path: " + QString::number(pathLength);
+	}
+	else
+	{
+		qDebug() << "No path found!";
+	}
 }

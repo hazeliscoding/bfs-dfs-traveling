@@ -31,6 +31,7 @@ protected:
     void AddItemsToScene();
     void SetStartAndGoal() const;
     void SetDefaultSelections();
+	int TracePath(Node *lastNode, QStack<int> *nodeStack);
     void Render();
 private:
     // UI Objects
