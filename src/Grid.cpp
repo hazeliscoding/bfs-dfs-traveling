@@ -271,10 +271,26 @@ void Grid::DisplayResults(Node* node)
 	{
 		const auto path = new QStack<int>();
 		const auto pathLength = TracePath(node, path);
+
+#ifdef QT_DEBUG
+		while (!path->isEmpty())
+		{
+			qDebug() << QString::number(path->pop());
+		}
 		qDebug() << "Length of the path: " + QString::number(pathLength);
+		qDebug() << "Seconds elapsed: " + QString::number(m_pathFinder->GetElapsedTime() / 1000.0, 'f', 2);
+#else
+		QMessageBox::information(this, "Path Length",
+			"Length of the path: " + QString::number(pathLength)
+			+ "\nSeconds elapsed: " + QString::number(m_pathFinder->GetElapsedTime() / 1000.0, 'f', 2));
+#endif
 	}
 	else
 	{
+#ifdef QT_DEBUG
 		qDebug() << "No path found!";
+#else
+		QMessageBox::information(this, "NULL", "No path found!");
+#endif
 	}
 }

@@ -10,6 +10,7 @@
 #include <QMouseEvent>
 #include <QObject>
 #include <QStack>
+#include <QMessageBox>
 
 #include <iostream>
 
