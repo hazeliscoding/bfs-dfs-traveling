@@ -56,7 +56,6 @@ private:
     QComboBox *m_gridSizeSelection;
 
     // Buttons
-    QPushButton *m_changeGridSizeButton;
     QPushButton *m_resetGridButton;
     QPushButton *m_startTravelButton;
     QPushButton *m_stopTravelButton;
