@@ -8,12 +8,14 @@ set(project_sources
     src/main.cpp
     src/MainWindow.cpp
     src/Grid.cpp
-    src/Node.cpp)
+    src/Node.cpp
+	src/PathFinder.cpp)
 
 set(project_headers
     include/MainWindow.h
     include/Grid.h
-    include/Node.h)
+    include/Node.h
+	include/PathFinder.h)
 
 set(project_ui
     ui/MainWindow.ui)

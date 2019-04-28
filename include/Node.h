@@ -20,19 +20,27 @@ public:
     bool IsWall() const;
     bool IsStart() const;
     bool IsGoal() const;
+	bool WasVisited() const;
+	Node *GetPreviousNode() const;
     void SetDescription() const;
     void SetStart(bool start);
     void SetGoal(bool goal);
+	void SetActive(bool active);
+	void SetPreviousNode(Node *node);
+	void SetVisited(bool visited);
     void SetWall();
     void UnsetWall();
+	void TracePath();
 private:
     int m_shapeSize;
     int m_id;
     QGraphicsRectItem *m_shape;
     QPointF *m_position;
     QGraphicsTextItem *m_desc;
+	Node *m_previous;
     bool m_wall;
     bool m_start;
     bool m_goal;
+	bool m_visited;
 };
 

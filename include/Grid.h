@@ -9,8 +9,12 @@
 #include <QPushButton>
 #include <QMouseEvent>
 #include <QObject>
+#include <QStack>
+
+#include <iostream>
 
 #include "Node.h"
+#include "PathFinder.h"
 
 class Grid : public QGraphicsView
 {
@@ -27,6 +31,7 @@ protected:
     void AddItemsToScene();
     void SetStartAndGoal() const;
     void SetDefaultSelections();
+	int TracePath(Node *lastNode, QStack<int> *nodeStack);
     void Render();
 private:
     // UI Objects
@@ -53,11 +58,14 @@ private:
     // Data structures
     QHash<QGraphicsItem*, Node*> *m_listOfSquares;
     QHash<int, Node*> *m_listOfIds;
+
+	PathFinder *m_pathFinder;
 private slots:
     void NewGridSize();
     void StartTraveling();
     void StopTraveling();
     void ResetGrid();
     void ClearGrid();
+	void DisplayResults(Node *node);
 };
 

@@ -23,7 +23,12 @@ Grid::Grid(QWidget *parent)
 	InitUI();
 	SetDefaultSelections();
 	Render();
-	//InitTraversals();
+
+	// Initialize pathfinder
+	auto cols = this->m_gridSceneWidth / this->m_squareSize;
+	auto rows = this->m_gridSceneHeight / this->m_squareSize;
+	this->m_pathFinder = new PathFinder(this->m_listOfIds, rows, cols, 10);
+	connect(this->m_pathFinder, SIGNAL(DisplayGoal(Node*)), this, SLOT(DisplayResults(Node*)));
 }
 
 void Grid::CreateGridSizes()
@@ -183,6 +188,19 @@ void Grid::SetDefaultSelections()
     this->m_algoSelection->setCurrentIndex(0);
 }
 
+int Grid::TracePath(Node* lastNode, QStack<int>* nodeStack)
+{
+	auto count = 0;
+	while (lastNode != nullptr)
+	{
+		lastNode->TracePath();
+		nodeStack->push(lastNode->GetId());
+		lastNode = lastNode->GetPreviousNode();
+		count++;
+	}
+	return count;
+}
+
 void Grid::Render()
 {
     AddItemsToScene();
@@ -207,7 +225,26 @@ void Grid::NewGridSize()
 
 void Grid::StartTraveling()
 {
-    // TODO: Start the selected algorithm
+	qDebug() << "Traveling...\n";
+
+	const auto cols = this->m_gridSceneWidth / this->m_squareSize;
+	const auto rows = this->m_gridSceneHeight / this->m_squareSize;
+
+	this->m_pathFinder->Setup(this->m_listOfIds, rows, cols, 10);
+
+	if (this->m_algoSelection->currentText() == "Depth-First Search")
+	{
+		qDebug() << "DFS started.\n";
+	}
+	else if (this->m_algoSelection->currentText() == "Breadth-First Search")
+	{
+		qDebug() << "BFS started.\n";
+		this->m_pathFinder->StartBreadthFirstSearch();
+	}
+	else
+	{
+		
+	}
 }
 
 void Grid::StopTraveling()
@@ -223,4 +260,19 @@ void Grid::ResetGrid()
 void Grid::ClearGrid()
 {
     // TODO: Implement clearing the whole grid
+}
+
+void Grid::DisplayResults(Node* node)
+{
+	// Trace the path
+	if (node != nullptr)
+	{
+		const auto path = new QStack<int>();
+		const auto pathLength = TracePath(node, path);
+		qDebug() << "Length of the path: " + QString::number(pathLength);
+	}
+	else
+	{
+		qDebug() << "No path found!";
+	}
 }
