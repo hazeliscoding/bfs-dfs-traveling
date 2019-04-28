@@ -8,3 +8,7 @@ A fun and practical way to display Breadth-First Search and Depth-First Search w
 - [x] Breadth-First Search traversal
 - [ ] Depth-First Search traversal
 - [ ] Determining the shortest path between two given nodes (NULL if no path is possible)
+
+## Prerequisites
+- CMake
+- Qt 5
