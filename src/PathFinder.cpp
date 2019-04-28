@@ -1,11 +1,10 @@
 #include "PathFinder.h"
 
-PathFinder::PathFinder(QHash<int, Node*>* listOfIds, const int rows, const int cols, const int tick, QObject* parent)
+PathFinder::PathFinder(QHash<int, Node*>* listOfIds, const int rows, const int cols, QObject* parent)
 	: m_hash(listOfIds)
 	, m_queue(nullptr)
 	, m_rows(rows)
 	, m_cols(cols)
-	, m_tickInterval(tick)
 {
 	// Init timers
 	this->m_bfsTick = new QTimer(this);
@@ -16,19 +15,18 @@ PathFinder::PathFinder(QHash<int, Node*>* listOfIds, const int rows, const int c
 	connect(this->m_bfsTick, SIGNAL(timeout()), this, SLOT(BreadthFirstSearchStep()));
 }
 
-void PathFinder::Setup(QHash<int, Node*>* listOfIds, int rows, int cols, int tick)
+void PathFinder::Setup(QHash<int, Node*>* listOfIds, int rows, int cols)
 {
 	this->m_rows = rows;
 	this->m_cols = cols;
 	this->m_hash = listOfIds;
-	this->m_tickInterval = tick;
 }
 
 void PathFinder::StartBreadthFirstSearch()
 {
 	// Setup queue and timer to use for BFS
 	this->m_queue = new QQueue<Node*>();
-	this->m_elapsedTimer->restart();
+	this->m_elapsedTimer->restart();	
 
 	// Starting point
 	Node *start = this->m_hash->value(0);
@@ -36,7 +34,7 @@ void PathFinder::StartBreadthFirstSearch()
 
 	// On each tick, take one node off the queue and search
 	this->m_bfsTick->blockSignals(false);
-	this->m_bfsTick->start(this->m_tickInterval);
+	this->m_bfsTick->start(TICK);
 }
 
 QList<Node*>* PathFinder::GetNeighborNodes(int id)

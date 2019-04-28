@@ -6,12 +6,14 @@
 
 #include "Node.h"
 
+#define TICK 50
+
 class PathFinder : public QObject
 {
 	Q_OBJECT
 public:
-	explicit PathFinder(QHash<int, Node*> *listOfIds, int rows, int cols, int tick, QObject *parent = nullptr);
-	void Setup(QHash<int, Node*> *listOfIds, int rows, int cols, int tick);
+	explicit PathFinder(QHash<int, Node*> *listOfIds, int rows, int cols, QObject *parent = nullptr);
+	void Setup(QHash<int, Node*> *listOfIds, int rows, int cols);
 	void StartBreadthFirstSearch();
 protected:
 	QList<Node*> *GetNeighborNodes(int id);

@@ -27,7 +27,7 @@ Grid::Grid(QWidget *parent)
 	// Initialize pathfinder
 	auto cols = this->m_gridSceneWidth / this->m_squareSize;
 	auto rows = this->m_gridSceneHeight / this->m_squareSize;
-	this->m_pathFinder = new PathFinder(this->m_listOfIds, rows, cols, 10);
+	this->m_pathFinder = new PathFinder(this->m_listOfIds, rows, cols);
 	connect(this->m_pathFinder, SIGNAL(DisplayGoal(Node*)), this, SLOT(DisplayResults(Node*)));
 }
 
@@ -230,7 +230,7 @@ void Grid::StartTraveling()
 	const auto cols = this->m_gridSceneWidth / this->m_squareSize;
 	const auto rows = this->m_gridSceneHeight / this->m_squareSize;
 
-	this->m_pathFinder->Setup(this->m_listOfIds, rows, cols, 10);
+	this->m_pathFinder->Setup(this->m_listOfIds, rows, cols);
 
 	if (this->m_algoSelection->currentText() == "Depth-First Search")
 	{
