@@ -25,7 +25,7 @@ public:
     void SetDescription() const;
     void SetStart(bool start);
     void SetGoal(bool goal);
-	void SetActive(bool active);
+
 	void SetPreviousNode(Node *node);
 	void SetVisited(bool visited);
     void SetWall();

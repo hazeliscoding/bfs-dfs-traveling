@@ -73,7 +73,7 @@ void Node::SetStart(const bool start)
 {
     this->m_start = start;
     if (start)
-        this->m_shape->setBrush(QBrush(QColor(0, 255, 72))); // Bright green
+        this->m_shape->setBrush(QBrush(Qt::green)); 
 }
 
 void Node::SetGoal(const bool goal)
@@ -81,18 +81,6 @@ void Node::SetGoal(const bool goal)
     this->m_goal = goal;
     if (goal)
         this->m_shape->setBrush(QBrush(Qt::red));
-}
-
-void Node::SetActive(bool active)
-{
-	if (active)
-	{
-		this->m_shape->setBrush(QBrush(Qt::yellow));
-	}
-	else
-	{
-		this->m_shape->setBrush(QBrush(Qt::white));
-	}
 }
 
 void Node::SetPreviousNode(Node *node)
@@ -106,7 +94,7 @@ void Node::SetVisited(bool visited)
 
 	if (visited)
 	{
-		this->m_shape->setBrush(QBrush(Qt::cyan)); // Dark green
+		this->m_shape->setBrush(QBrush(Qt::green)); 
 	}
 	else
 	{
@@ -129,8 +117,8 @@ void Node::UnsetWall()
     this->m_shape->setBrush(QBrush(Qt::white));
 }
 
-void Node::TracePath()
+void Node::TracePath() const
 {
-	this->m_shape->setBrush(QBrush(Qt::yellow));
+	this->m_shape->setBrush(QBrush(Qt::magenta));
 }
 
