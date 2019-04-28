@@ -10,5 +10,12 @@ A fun and practical way to display Breadth-First Search and Depth-First Search w
 - [ ] Determining the shortest path between two given nodes (NULL if no path is possible)
 
 ## Prerequisites
-- CMake
-- Qt 5
+* [CMake](https://cmake.org/)
+* [Qt5](https://www.qt.io/)
+
+## Building
+
+``` shell
+cd mkdir build && cd build
+cmake ..
+```
