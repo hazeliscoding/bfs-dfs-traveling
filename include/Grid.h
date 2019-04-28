@@ -10,6 +10,7 @@
 #include <QMouseEvent>
 #include <QObject>
 #include <QStack>
+#include <QMessageBox>
 
 #include <iostream>
 
@@ -34,7 +35,7 @@ protected:
     void AddItemsToGridGroupBox(QGroupBox *groupBox);
 
 	// Adds the shapes from the nodes to the scene
-    void AddItemsToScene();
+    void AddItemsToScene() const;
 
 	// Set the start and goal nodes
     void SetStartAndGoal() const;
@@ -56,7 +57,6 @@ private:
     QComboBox *m_gridSizeSelection;
 
     // Buttons
-    QPushButton *m_changeGridSizeButton;
     QPushButton *m_resetGridButton;
     QPushButton *m_startTravelButton;
     QPushButton *m_stopTravelButton;

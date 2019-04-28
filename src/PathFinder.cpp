@@ -37,6 +37,11 @@ void PathFinder::StartBreadthFirstSearch()
 	this->m_bfsTick->start(TICK);
 }
 
+quint64 PathFinder::GetElapsedTime() const
+{
+	return this->m_timeElapsed;
+}
+
 QList<Node*>* PathFinder::GetNeighborNodes(const int id) const
 {
 	auto *neighborNodes = new QList<Node*>();

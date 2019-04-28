@@ -20,6 +20,9 @@ public:
 
 	// Starts the BFS algorithm on the list of nodes
 	void StartBreadthFirstSearch();
+
+	// Gets the time elapsed during search
+	quint64 GetElapsedTime() const;
 protected:
 	// Gets the adjacent nodes which have not been visited
 	QList<Node*> *GetNeighborNodes(int id) const;
