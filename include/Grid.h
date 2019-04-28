@@ -34,7 +34,7 @@ protected:
     void AddItemsToGridGroupBox(QGroupBox *groupBox);
 
 	// Adds the shapes from the nodes to the scene
-    void AddItemsToScene();
+    void AddItemsToScene() const;
 
 	// Set the start and goal nodes
     void SetStartAndGoal() const;

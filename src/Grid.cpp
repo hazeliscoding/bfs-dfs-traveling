@@ -98,7 +98,7 @@ void Grid::InitUI()
     gridLayout->addItem(spacer, 0, 1);
 
     // Control Boxes
-	const auto gridGroupBox = new QGroupBox("Grid", this);
+	const auto gridGroupBox = new QGroupBox("Grid Configuration", this);
     gridLayout->addWidget(gridGroupBox, 0, 2);
     AddItemsToGridGroupBox(gridGroupBox);
 }
@@ -147,7 +147,7 @@ void Grid::AddItemsToGridGroupBox(QGroupBox *groupBox)
     connect(this->m_clearGridButton, SIGNAL(clicked()), this, SLOT(ClearGrid()));
 }
 
-void Grid::AddItemsToScene()
+void Grid::AddItemsToScene() const
 {
 	const auto cols = this->m_gridSceneWidth / this->m_squareSize;
     const auto rows = this->m_gridSceneHeight / this->m_squareSize;
@@ -194,7 +194,7 @@ void Grid::SetDefaultSelections()
     this->m_squareSize = this->m_squareSizes[1][this->m_gridSizeSelection->currentIndex()];
 
     // Set default algorithm
-    this->m_algoSelection->setCurrentIndex(0);
+    this->m_algoSelection->setCurrentIndex(1);
 }
 
 int Grid::TracePath(Node* lastNode, QStack<int>* nodeStack)
@@ -234,8 +234,6 @@ void Grid::NewGridSize()
 
 void Grid::StartTraveling()
 {
-	qDebug() << "Traveling...\n";
-
 	const auto cols = this->m_gridSceneWidth / this->m_squareSize;
 	const auto rows = this->m_gridSceneHeight / this->m_squareSize;
 
@@ -247,12 +245,7 @@ void Grid::StartTraveling()
 	}
 	else if (this->m_algoSelection->currentText() == "Breadth-First Search")
 	{
-		qDebug() << "BFS started.\n";
 		this->m_pathFinder->StartBreadthFirstSearch();
-	}
-	else
-	{
-		
 	}
 }
 
