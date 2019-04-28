@@ -23,7 +23,12 @@ Grid::Grid(QWidget *parent)
 	InitUI();
 	SetDefaultSelections();
 	Render();
-	//InitTraversals();
+
+	// Initialize pathfinder
+	auto cols = this->m_gridSceneWidth / this->m_squareSize;
+	auto rows = this->m_gridSceneHeight / this->m_squareSize;
+	this->m_pathFinder = new PathFinder(this->m_listOfIds, rows, cols, 10);
+	connect(this->m_pathFinder, SIGNAL(DisplayGoal(Node*)), this, SLOT(DisplayResults(Node*)));
 }
 
 void Grid::CreateGridSizes()
@@ -207,7 +212,26 @@ void Grid::NewGridSize()
 
 void Grid::StartTraveling()
 {
-    // TODO: Start the selected algorithm
+	qDebug() << "Traveling...\n";
+
+	const auto cols = this->m_gridSceneWidth / this->m_squareSize;
+	const auto rows = this->m_gridSceneHeight / this->m_squareSize;
+
+	this->m_pathFinder->Setup(this->m_listOfIds, rows, cols, 10);
+
+	if (this->m_algoSelection->currentText() == "Depth-First Search")
+	{
+		qDebug() << "DFS started.\n";
+	}
+	else if (this->m_algoSelection->currentText() == "Breadth-First Search")
+	{
+		qDebug() << "BFS started.\n";
+		this->m_pathFinder->StartBreadthFirstSearch();
+	}
+	else
+	{
+		
+	}
 }
 
 void Grid::StopTraveling()
