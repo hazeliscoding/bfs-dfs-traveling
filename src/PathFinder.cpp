@@ -12,7 +12,7 @@ PathFinder::PathFinder(QHash<int, Node*>* listOfIds, const int rows, const int c
 	this->m_timeElapsed = 0;
 
 	// Connect algorithm steps with timers
-	connect(this->m_bfsTick, SIGNAL(timeout()), this, SLOT(BreadthFirstSearchStep()));
+	connect(this->m_bfsTick, SIGNAL(timeout()), this, SLOT(RouteBFS()));
 }
 
 void PathFinder::Setup(QHash<int, Node*>* listOfIds, int rows, int cols)
@@ -26,7 +26,7 @@ void PathFinder::StartBreadthFirstSearch()
 {
 	// Setup queue and timer to use for BFS
 	this->m_queue = new QQueue<Node*>();
-	this->m_elapsedTimer->restart();	
+	this->m_elapsedTimer->restart();
 
 	// Starting point
 	Node *start = this->m_hash->value(0);
@@ -37,7 +37,7 @@ void PathFinder::StartBreadthFirstSearch()
 	this->m_bfsTick->start(TICK);
 }
 
-QList<Node*>* PathFinder::GetNeighborNodes(int id)
+QList<Node*>* PathFinder::GetNeighborNodes(const int id) const
 {
 	auto *neighborNodes = new QList<Node*>();
 	const auto numNodes = this->m_rows * this->m_cols;
@@ -103,7 +103,7 @@ void PathFinder::Stop(Node* node)
 	emit DisplayGoal(node);
 }
 
-void PathFinder::BreadthFirstSearchStep()
+void PathFinder::RouteBFS()
 {
 	Node *nextNode;
 	auto validNodeCounter = 0;
@@ -124,7 +124,6 @@ void PathFinder::BreadthFirstSearchStep()
 		if (currentNode->WasVisited())
 			return;
 
-		currentNode->SetActive(true);
 		const auto currentId = currentNode->GetId();
 		auto neighborNodes = GetNeighborNodes(currentId);
 
@@ -161,6 +160,6 @@ void PathFinder::BreadthFirstSearchStep()
 	if (validNodeCounter == 0)
 	{
 		validNodeCounter = 0;
-		BreadthFirstSearchStep();
+		RouteBFS();
 	}
 }
