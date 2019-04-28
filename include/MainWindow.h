@@ -16,10 +16,16 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 protected:
+	// Initializes ui for window
     void InitUI();
 private:
+	// UI entity
     Ui::MainWindow *ui;
+
+	// Pointer to the grid GUI item
     Grid *m_grid;
+
+	// Window height, width
     int m_windowHeight;
     int m_windowWidth;
 };
