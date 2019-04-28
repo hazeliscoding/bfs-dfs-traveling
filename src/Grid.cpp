@@ -37,17 +37,23 @@ void Grid::CreateGridSizes()
     // Row 2: Size of squares
     this->m_squareSizes = new int*[2];
     for (auto i = 0; i < 2; i++)
-        this->m_squareSizes[i] = new int[4];
+        this->m_squareSizes[i] = new int[6];
 
-    m_squareSizes[0][0] = 20;
-    m_squareSizes[0][1] = 80;
-    m_squareSizes[0][2] = 100;
-	m_squareSizes[0][3] = 200;
+	this->m_squareSizes[0][0] = 20;
+	this->m_squareSizes[0][1] = 80;
+	this->m_squareSizes[0][2] = 100;
+	this->m_squareSizes[0][3] = 200;
+	this->m_squareSizes[0][4] = 300;
+	this->m_squareSizes[0][5] = 400;
+	this->m_squareSizes[0][6] = 500;
 
-    m_squareSizes[1][0] = 150;
-    m_squareSizes[1][1] = 75;
-	m_squareSizes[1][2] = 50;
-	m_squareSizes[1][3] = 45;
+	this->m_squareSizes[1][0] = 150;
+	this->m_squareSizes[1][1] = 75;
+	this->m_squareSizes[1][2] = 50;
+	this->m_squareSizes[1][3] = 45;
+	this->m_squareSizes[1][4] = 40;
+	this->m_squareSizes[1][5] = 35;
+	this->m_squareSizes[1][6] = 30;
 }
 
 void Grid::mousePressEvent(QMouseEvent *me)
@@ -116,6 +122,9 @@ void Grid::AddItemsToGridGroupBox(QGroupBox *groupBox)
     this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][1]));
 	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][2]));
 	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][3]));
+	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][4]));
+	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][5]));
+	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][6]));
     controlLayout->addRow(gridSizeDesc, this->m_gridSizeSelection);
 
     this->m_resetGridButton = new QPushButton("Reset Grid");
