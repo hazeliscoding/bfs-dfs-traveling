@@ -267,7 +267,7 @@ void Grid::StopTraveling()
 
 void Grid::ResetGrid()
 {
-    for (auto& item : *m_listOfSquares)
+    for (auto& item : *this->m_listOfSquares)
     {
 	    if (!item->IsWall())
 	    {
@@ -289,7 +289,21 @@ void Grid::ResetGrid()
 
 void Grid::ClearGrid()
 {
-    // TODO: Implement clearing the whole grid
+    for (auto& item : *this->m_listOfSquares)
+    {
+		item->UnsetWall();
+		item->SetStart(false);
+		item->SetVisited(false);
+		item->SetGoal(false);
+
+		if (this->m_squareSize > this->m_nodeDescThreshold)
+			item->SetDescription();
+    }
+
+	// Reset start/goal
+	SetStartAndGoal();
+
+	this->m_startTravelButton->setEnabled(true);
 }
 
 void Grid::DisplayResults(Node* node)
