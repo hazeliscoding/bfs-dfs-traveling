@@ -5,10 +5,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    this->m_windowWidth = 1024;
-    this->m_windowHeight = 700;
+	this->m_windowWidth = 1100;
+	this->m_windowHeight = 700;
 
-    this->InitUI();
+	this->setFixedSize(m_windowWidth, m_windowHeight);
+
+	this->InitUI();
 }
 
 MainWindow::~MainWindow()
