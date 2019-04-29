@@ -41,19 +41,13 @@ void Grid::CreateGridSizes()
 
 	this->m_squareSizes[0][0] = 20;
 	this->m_squareSizes[0][1] = 80;
-	this->m_squareSizes[0][2] = 100;
-	this->m_squareSizes[0][3] = 200;
-	this->m_squareSizes[0][4] = 300;
-	this->m_squareSizes[0][5] = 400;
-	this->m_squareSizes[0][6] = 500;
+	this->m_squareSizes[0][2] = 500;
+	this->m_squareSizes[0][3] = 2000;
 
 	this->m_squareSizes[1][0] = 150;
 	this->m_squareSizes[1][1] = 75;
-	this->m_squareSizes[1][2] = 50;
-	this->m_squareSizes[1][3] = 45;
-	this->m_squareSizes[1][4] = 40;
-	this->m_squareSizes[1][5] = 35;
-	this->m_squareSizes[1][6] = 30;
+	this->m_squareSizes[1][2] = 30;
+	this->m_squareSizes[1][3] = 15;
 }
 
 void Grid::mousePressEvent(QMouseEvent *me)
