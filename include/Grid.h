@@ -46,6 +46,9 @@ protected:
 	// Traces back a path from the exit (if it exists)
 	int TracePath(Node *lastNode, QStack<int> *nodeStack);
 
+	// Switches UI elements on and off
+	void UpdateUiState();
+
 	// Draws the grid
     void Render();
 private:

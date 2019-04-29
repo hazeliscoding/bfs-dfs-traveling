@@ -41,19 +41,13 @@ void Grid::CreateGridSizes()
 
 	this->m_squareSizes[0][0] = 20;
 	this->m_squareSizes[0][1] = 80;
-	this->m_squareSizes[0][2] = 100;
-	this->m_squareSizes[0][3] = 200;
-	this->m_squareSizes[0][4] = 300;
-	this->m_squareSizes[0][5] = 400;
-	this->m_squareSizes[0][6] = 500;
+	this->m_squareSizes[0][2] = 500;
+	this->m_squareSizes[0][3] = 2000;
 
 	this->m_squareSizes[1][0] = 150;
 	this->m_squareSizes[1][1] = 75;
-	this->m_squareSizes[1][2] = 50;
-	this->m_squareSizes[1][3] = 45;
-	this->m_squareSizes[1][4] = 40;
-	this->m_squareSizes[1][5] = 35;
-	this->m_squareSizes[1][6] = 30;
+	this->m_squareSizes[1][2] = 30;
+	this->m_squareSizes[1][3] = 15;
 }
 
 void Grid::mousePressEvent(QMouseEvent *me)
@@ -118,13 +112,10 @@ void Grid::AddItemsToGridGroupBox(QGroupBox *groupBox)
     // Display the possible sizes of the grid to user
     const auto gridSizeDesc = new QLabel("Grid Size");
     this->m_gridSizeSelection = new QComboBox();
-    this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][0]));
-    this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][1]));
-	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][2]));
-	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][3]));
-	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][4]));
-	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][5]));
-	this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][6]));
+	for (auto i = 0; i < 4; i++)
+	{
+		this->m_gridSizeSelection->addItem(QString::number(this->m_squareSizes[0][i]));
+	}
     controlLayout->addRow(gridSizeDesc, this->m_gridSizeSelection);
 
     this->m_resetGridButton = new QPushButton("Reset Grid");
@@ -138,6 +129,7 @@ void Grid::AddItemsToGridGroupBox(QGroupBox *groupBox)
 
     this->m_stopTravelButton = new QPushButton("Stop Traveling");
     controlLayout->addRow(this->m_stopTravelButton);
+	this->m_stopTravelButton->setVisible(false);
 
     // Connect UI objects to slots
 	connect(this->m_gridSizeSelection, SIGNAL(activated(int)), this, SLOT(NewGridSize()));
@@ -210,6 +202,15 @@ int Grid::TracePath(Node* lastNode, QStack<int>* nodeStack)
 	return count;
 }
 
+void Grid::UpdateUiState()
+{
+	this->m_startTravelButton->setEnabled(!this->m_startTravelButton->isEnabled());
+	this->m_resetGridButton->setEnabled(!this->m_resetGridButton->isEnabled());
+	this->m_gridSizeSelection->setEnabled(!this->m_gridSizeSelection->isEnabled());
+	this->m_algoSelection->setEnabled(!this->m_algoSelection->isEnabled());
+	this->m_clearGridButton->setEnabled(!this->m_clearGridButton->isEnabled());
+}
+
 void Grid::Render()
 {
     AddItemsToScene();
@@ -234,6 +235,10 @@ void Grid::NewGridSize()
 
 void Grid::StartTraveling()
 {
+	UpdateUiState();
+	this->m_startTravelButton->setVisible(false);
+	this->m_stopTravelButton->setVisible(true);
+
 	const auto cols = this->m_gridSceneWidth / this->m_squareSize;
 	const auto rows = this->m_gridSceneHeight / this->m_squareSize;
 
@@ -256,12 +261,43 @@ void Grid::StopTraveling()
 
 void Grid::ResetGrid()
 {
-    // TODO: Reset the search
+    for (auto& item : *this->m_listOfSquares)
+    {
+	    if (!item->IsWall())
+	    {
+			item->UnsetWall();
+			item->SetStart(false);
+			item->SetVisited(false);
+			item->SetGoal(false);
+
+			if (this->m_squareSize > this->m_nodeDescThreshold)
+				item->SetDescription();
+	    }
+    }
+
+	// Reset start/goal
+	SetStartAndGoal();
+
+	this->m_startTravelButton->setEnabled(true);
 }
 
 void Grid::ClearGrid()
 {
-    // TODO: Implement clearing the whole grid
+    for (auto& item : *this->m_listOfSquares)
+    {
+		item->UnsetWall();
+		item->SetStart(false);
+		item->SetVisited(false);
+		item->SetGoal(false);
+
+		if (this->m_squareSize > this->m_nodeDescThreshold)
+			item->SetDescription();
+    }
+
+	// Reset start/goal
+	SetStartAndGoal();
+
+	this->m_startTravelButton->setEnabled(true);
 }
 
 void Grid::DisplayResults(Node* node)
@@ -293,4 +329,10 @@ void Grid::DisplayResults(Node* node)
 		QMessageBox::information(this, "NULL", "No path found!");
 #endif
 	}
+
+	// Disable searching until grid is reset
+	UpdateUiState();
+	this->m_startTravelButton->setEnabled(false);
+	this->m_startTravelButton->setVisible(true);
+	this->m_stopTravelButton->setVisible(false);
 }
