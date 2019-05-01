@@ -124,6 +124,9 @@ void Grid::AddItemsToGridGroupBox(QGroupBox *groupBox)
     this->m_clearGridButton = new QPushButton("Clear Grid");
     controlLayout->addRow(this->m_clearGridButton);
 
+	this->m_randomizeGridButton = new QPushButton("Randomize Grid");
+	controlLayout->addRow(this->m_randomizeGridButton);
+
     this->m_startTravelButton = new QPushButton("Start Traveling");
     controlLayout->addRow(this->m_startTravelButton);
 
@@ -137,6 +140,7 @@ void Grid::AddItemsToGridGroupBox(QGroupBox *groupBox)
     connect(this->m_stopTravelButton, SIGNAL(clicked()), this, SLOT(StopTraveling()));
     connect(this->m_resetGridButton, SIGNAL(clicked()), this, SLOT(ResetGrid()));
     connect(this->m_clearGridButton, SIGNAL(clicked()), this, SLOT(ClearGrid()));
+	connect(this->m_randomizeGridButton, SIGNAL(clicked()), this, SLOT(RandomizeGrid()));
 }
 
 void Grid::AddItemsToScene() const
@@ -209,6 +213,7 @@ void Grid::UpdateUiState()
 	this->m_gridSizeSelection->setEnabled(!this->m_gridSizeSelection->isEnabled());
 	this->m_algoSelection->setEnabled(!this->m_algoSelection->isEnabled());
 	this->m_clearGridButton->setEnabled(!this->m_clearGridButton->isEnabled());
+	this->m_randomizeGridButton->setEnabled(!this->m_randomizeGridButton->isEnabled());
 }
 
 void Grid::Render()
@@ -224,8 +229,8 @@ void Grid::NewGridSize()
     this->m_squareSize = this->m_squareSizes[1][this->m_gridSizeSelection->currentIndex()];
     this->m_scene->clear();
 
-    for (auto &item : *this->m_listOfSquares)
-        delete item;
+    for (auto &node : *this->m_listOfSquares)
+        delete node;
 
     this->m_listOfSquares->clear();
     this->m_listOfIds->clear();
@@ -261,17 +266,17 @@ void Grid::StopTraveling()
 
 void Grid::ResetGrid()
 {
-    for (auto& item : *this->m_listOfSquares)
+    for (auto& node : *this->m_listOfSquares)
     {
-	    if (!item->IsWall())
+	    if (!node->IsWall())
 	    {
-			item->UnsetWall();
-			item->SetStart(false);
-			item->SetVisited(false);
-			item->SetGoal(false);
+			node->UnsetWall();
+			node->SetStart(false);
+			node->SetVisited(false);
+			node->SetGoal(false);
 
 			if (this->m_squareSize > this->m_nodeDescThreshold)
-				item->SetDescription();
+				node->SetDescription();
 	    }
     }
 
@@ -283,21 +288,37 @@ void Grid::ResetGrid()
 
 void Grid::ClearGrid()
 {
-    for (auto& item : *this->m_listOfSquares)
+    for (auto& node : *this->m_listOfSquares)
     {
-		item->UnsetWall();
-		item->SetStart(false);
-		item->SetVisited(false);
-		item->SetGoal(false);
+		node->UnsetWall();
+		node->SetStart(false);
+		node->SetVisited(false);
+		node->SetGoal(false);
 
 		if (this->m_squareSize > this->m_nodeDescThreshold)
-			item->SetDescription();
+			node->SetDescription();
     }
 
 	// Reset start/goal
 	SetStartAndGoal();
 
 	this->m_startTravelButton->setEnabled(true);
+}
+
+void Grid::RandomizeGrid()
+{
+	ClearGrid();
+	for (auto node : *this->m_listOfSquares)
+	{
+		if (!node->IsGoal() || !node->IsStart())
+		{
+			const auto heuristic = qrand() % 3; // Decides if it's a wall or not
+			if (heuristic >= 2)
+			{
+				node->SetWall();
+			}
+		}
+	}
 }
 
 void Grid::DisplayResults(Node* node)
