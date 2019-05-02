@@ -7,7 +7,7 @@
 #include "Node.h"
 
 // Tick-rate at which the algorithm runs
-#define TICK 10
+#define TICK 5
 
 class PathFinder : public QObject
 {
@@ -23,11 +23,14 @@ public:
 
 	// Gets the time elapsed during search
 	quint64 GetElapsedTime() const;
+
+	// Stops the algorithm, triggered from the UI
+	void TriggerInterrupt();
 protected:
 	// Gets the adjacent nodes which have not been visited
 	QList<Node*> *GetNeighborNodes(int id) const;
 
-	// Stops a search
+	// Stops a algorithm
 	void Stop(Node *node);
 private:
 	// Used to get nodes by ID
@@ -40,7 +43,7 @@ private:
 	QTimer *m_bfsTick;
 
 	// Measures elapsed time when performing an algorithm
-	QElapsedTimer *m_elapsedTimer;
+	QElapsedTimer *m_timer;
 
 	// Time elapsed during an algorithm
 	quint64 m_timeElapsed;
@@ -48,6 +51,9 @@ private:
 	// N-rows and N-columns to use in the algorithm
 	int m_rows;
 	int m_cols;
+
+	// Flag to interrupt performing an algorithm
+	bool m_interrupted;
 private slots:
 	// Performs one step in the BFS search algorithm
 	void RouteBFS();

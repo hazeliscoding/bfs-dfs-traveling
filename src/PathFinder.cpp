@@ -5,10 +5,11 @@ PathFinder::PathFinder(QHash<int, Node*>* listOfIds, const int rows, const int c
 	, m_queue(nullptr)
 	, m_rows(rows)
 	, m_cols(cols)
+	, m_interrupted(false)
 {
 	// Init timers
 	this->m_bfsTick = new QTimer(this);
-	this->m_elapsedTimer = new QElapsedTimer();
+	this->m_timer = new QElapsedTimer();
 	this->m_timeElapsed = 0;
 
 	// Connect algorithm steps with timers
@@ -26,7 +27,7 @@ void PathFinder::StartBreadthFirstSearch()
 {
 	// Setup queue and timer to use for BFS
 	this->m_queue = new QQueue<Node*>();
-	this->m_elapsedTimer->restart();
+	this->m_timer->restart();
 
 	// Starting point
 	Node *start = this->m_hash->value(0);
@@ -40,6 +41,13 @@ void PathFinder::StartBreadthFirstSearch()
 quint64 PathFinder::GetElapsedTime() const
 {
 	return this->m_timeElapsed;
+}
+
+void PathFinder::TriggerInterrupt()
+{
+	this->m_timeElapsed = this->m_timer->elapsed();
+	this->m_timer->invalidate();
+	m_interrupted = true;
 }
 
 QList<Node*>* PathFinder::GetNeighborNodes(const int id) const
@@ -94,8 +102,8 @@ QList<Node*>* PathFinder::GetNeighborNodes(const int id) const
 void PathFinder::Stop(Node* node)
 {
 	// Stop ALL timers
-	this->m_timeElapsed = this->m_elapsedTimer->elapsed();
-	this->m_elapsedTimer->invalidate();
+	this->m_timeElapsed = this->m_timer->elapsed();
+	this->m_timer->invalidate();
 
 	this->m_bfsTick->blockSignals(true);
 	this->m_bfsTick->stop();
@@ -110,6 +118,16 @@ void PathFinder::Stop(Node* node)
 
 void PathFinder::RouteBFS()
 {
+	// Check if this algorithm has been interrupted while running
+	if (this->m_interrupted)
+	{
+		this->m_bfsTick->blockSignals(false);
+		this->m_bfsTick->stop();
+		this->m_interrupted = false;
+		Stop(nullptr); // Interrupt the search, pass in nullptr as the goal hasn't been found
+		return;
+	}
+
 	Node *nextNode;
 	auto validNodeCounter = 0;
 	auto goalFound = false;

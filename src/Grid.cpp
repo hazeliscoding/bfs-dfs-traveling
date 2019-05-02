@@ -25,8 +25,8 @@ Grid::Grid(QWidget *parent)
 	Render();
 
 	// Initialize pathfinder
-	auto cols = this->m_gridSceneWidth / this->m_squareSize;
-	auto rows = this->m_gridSceneHeight / this->m_squareSize;
+	const auto cols = this->m_gridSceneWidth / this->m_squareSize;
+	const auto rows = this->m_gridSceneHeight / this->m_squareSize;
 	this->m_pathFinder = new PathFinder(this->m_listOfIds, rows, cols);
 	connect(this->m_pathFinder, SIGNAL(DisplayGoal(Node*)), this, SLOT(DisplayResults(Node*)));
 }
@@ -261,7 +261,9 @@ void Grid::StartTraveling()
 
 void Grid::StopTraveling()
 {
-    // TODO: Stop traveling in mid-search
+	m_stopTravelButton->setVisible(false);
+	m_startTravelButton->setEnabled(true);
+	m_pathFinder->TriggerInterrupt();
 }
 
 void Grid::ResetGrid()
@@ -313,10 +315,8 @@ void Grid::RandomizeGrid()
 		if (!node->IsGoal() || !node->IsStart())
 		{
 			const auto heuristic = qrand() % 3; // Decides if it's a wall or not
-			if (heuristic >= 2)
-			{
-				node->SetWall();
-			}
+			if (heuristic >= 2)			
+				node->SetWall();			
 		}
 	}
 }
