@@ -64,6 +64,7 @@ private:
     QPushButton *m_startTravelButton;
     QPushButton *m_stopTravelButton;
     QPushButton *m_clearGridButton;
+	QPushButton *m_randomizeGridButton;
 
     // Grid attributes
     int m_gridSceneHeight;
@@ -95,6 +96,9 @@ private slots:
 
 	// Resets grid entirely
     void ClearGrid();
+
+	// Place random walls on grid
+	void RandomizeGrid();
 
 	// Displays the result of the search
 	void DisplayResults(Node *node);

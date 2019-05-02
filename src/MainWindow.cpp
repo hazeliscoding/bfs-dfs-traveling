@@ -18,6 +18,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::keyPressEvent(QKeyEvent* ke)
+{
+
+	// Close window on ESC
+	if (ke->key() == Qt::Key_Escape)
+	{
+		this->window()->close();
+	}
+}
+
 void MainWindow::InitUI()
 {
     // Load layout from form
