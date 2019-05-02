@@ -15,6 +15,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+public slots:
+	void keyPressEvent(QKeyEvent *ke) override;
 protected:
 	// Initializes ui for window
     void InitUI();
