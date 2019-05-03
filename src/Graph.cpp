@@ -16,7 +16,7 @@ Graph::Graph(QWidget *parent)
 	this->m_cellSize = this->m_cellSizes[1][0];
 	this->m_vertexDescThreshold = this->m_cellSizes[1][2];
 
-	// Data structures which hold pointers to all the vertexs
+	// Data structures which hold pointers to all the vertices
 	this->m_cellList = new QHash<QGraphicsItem*, Vertex*>();
 	this->m_idList = new QHash<int, Vertex*>();
 
@@ -61,21 +61,21 @@ void Graph::mousePressEvent(QMouseEvent *me)
     if (current == nullptr)
         return;
 
-    auto selectedvertex = this->m_cellList->value(current);
+    auto selected = this->m_cellList->value(current);
 
-    if (selectedvertex == nullptr)
+    if (selected == nullptr)
         return;
 
     // Set and unset walls at the clicked vertex
     if (me->button() == Qt::LeftButton)
     {
-        if (selectedvertex->IsWall())
+        if (selected->IsWall())
         {
-            selectedvertex->UnsetWall();
+            selected->UnsetWall();
         }
         else
         {
-            selectedvertex->SetWall();
+            selected->SetWall();
         }
     }
 }
@@ -96,7 +96,7 @@ void Graph::InitUI()
     GraphLayout->addItem(spacer, 0, 1);
 
     // Control Boxes
-	const auto GraphGroupBox = new QGroupBox("Graph Configuration", this);
+	const auto GraphGroupBox = new QGroupBox("Configuration", this);
     GraphLayout->addWidget(GraphGroupBox, 0, 2);
     AddItemsToGroupBox(GraphGroupBox);
 }
@@ -255,7 +255,7 @@ void Graph::StartTraveling()
 
 	if (this->m_algorithmSelection->currentText() == "Depth-First Search")
 	{
-		qDebug() << "DFS started.\n";
+		this->m_pathFinder->StartDepthFirstSearch();
 	}
 	else if (this->m_algorithmSelection->currentText() == "Breadth-First Search")
 	{
