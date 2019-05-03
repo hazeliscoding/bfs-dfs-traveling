@@ -3,11 +3,12 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QQueue>
+#include <QStack>
 
 #include "Vertex.h"
 
 // Tick-rate at which the algorithm runs
-#define TICK 5
+#define TICK_RATE 5
 
 class PathFinder : public QObject
 {
@@ -18,8 +19,11 @@ public:
 	// Sets the needed values for solving traversals
 	void Setup(QHash<int, Vertex*> *listOfIds, int rows, int cols);
 
-	// Starts the BFS algorithm on the list of vertexs
+	// Starts the BFS algorithm on the list of vertices
 	void StartBreadthFirstSearch();
+
+	// Starts the DFS algorithm on the list of vertices
+	void StartDepthFirstSearch();
 
 	// Gets the time elapsed during search
 	quint64 GetElapsedTime() const;
@@ -33,13 +37,17 @@ protected:
 	// Stops a algorithm
 	void Stop(Vertex *vertex);
 private:
-	// Used to get vertexs by ID
+	// Used to get vertices by ID
 	QHash<int, Vertex*> *m_hash;
 
 	// Queue for BFS
 	QQueue<Vertex*> *m_queue;
 
-	// Timer that triggers a step BFS algorithm
+	// Stack for DFS
+	QStack<Vertex*> *m_stack;
+
+	// Timers that triggers a step DFS, BFS algorithm
+	QTimer *m_dfsTick;
 	QTimer *m_bfsTick;
 
 	// Measures elapsed time when performing an algorithm
@@ -55,8 +63,9 @@ private:
 	// Flag to interrupt performing an algorithm
 	bool m_interrupted;
 private slots:
-	// Performs one step in the BFS search algorithm
+	// These functions perform one step in the BFS, DFS search algorithms
 	void RouteBFS();
+	void RouteDFS();
 signals:
 	// Display the path/goal
 	void DisplayGoal(Vertex *goal);

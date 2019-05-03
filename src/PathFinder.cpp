@@ -1,19 +1,38 @@
 #include "PathFinder.h"
+#include <random>
+#include <array>
+
+int ran(int min, int max)
+{
+	// Init RNG
+	std::array<int, std::mt19937::state_size> seed_data{};
+	std::random_device r;
+	std::generate_n(seed_data.data(), seed_data.size(), std::ref(r));
+	std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
+	std::mt19937 generator(seq);
+
+	// Get random number
+	std::uniform_int_distribution<int> dist(min, max);
+	return dist(generator);
+}
 
 PathFinder::PathFinder(QHash<int, Vertex*>* listOfIds, const int rows, const int cols, QObject* parent)
 	: m_hash(listOfIds)
 	, m_queue(nullptr)
+	, m_stack(nullptr)
 	, m_rows(rows)
 	, m_cols(cols)
 	, m_interrupted(false)
 {
 	// Init timers
-	this->m_bfsTick = new QTimer(this);
+	this->m_bfsTick = new QTimer(this); 
+	this->m_dfsTick = new QTimer(this);
 	this->m_timer = new QElapsedTimer();
 	this->m_timeElapsed = 0;
 
 	// Connect algorithm steps with timers
 	connect(this->m_bfsTick, SIGNAL(timeout()), this, SLOT(RouteBFS()));
+	connect(this->m_dfsTick, SIGNAL(timeout()), this, SLOT(RouteDFS()));
 }
 
 void PathFinder::Setup(QHash<int, Vertex*>* listOfIds, const int rows, const int cols)
@@ -35,7 +54,22 @@ void PathFinder::StartBreadthFirstSearch()
 
 	// On each tick, take one vertex off the queue and search
 	this->m_bfsTick->blockSignals(false);
-	this->m_bfsTick->start(TICK);
+	this->m_bfsTick->start(TICK_RATE);
+}
+
+void PathFinder::StartDepthFirstSearch()
+{
+	// Setup stack and timer to use for DFS
+	this->m_stack = new QStack<Vertex*>();
+	this->m_timer->restart();
+
+	// Starting point
+	Vertex *start = this->m_hash->value(0);
+	this->m_stack->push(start);
+
+	// On each tick, take one vertex off the stack and search
+	this->m_dfsTick->blockSignals(false);
+	this->m_dfsTick->start(TICK_RATE);
 }
 
 quint64 PathFinder::GetElapsedTime() const
@@ -52,7 +86,7 @@ void PathFinder::TriggerInterrupt()
 
 QList<Vertex*>* PathFinder::GetNeighbors(const int id) const
 {
-	auto *neighbors = new QList<Vertex*>();
+	auto neighbors = new QList<Vertex*>();
 	const auto numVertices = this->m_rows * this->m_cols;
 
 	Vertex *adjacentVertex;
@@ -108,9 +142,15 @@ void PathFinder::Stop(Vertex* vertex)
 	this->m_bfsTick->blockSignals(true);
 	this->m_bfsTick->stop();
 
+	this->m_dfsTick->blockSignals(true);
+	this->m_dfsTick->stop();
+
 	// Clear containers
 	if (this->m_queue != nullptr)
 		this->m_queue->clear();
+
+	if (this->m_stack != nullptr)
+		this->m_stack->clear();
 
 	// Display the path
 	emit DisplayGoal(vertex);
@@ -154,7 +194,7 @@ void PathFinder::RouteBFS()
 		{
 			next = neighbors->takeFirst();
 
-			// Ignore walls or vertexs that are already visited
+			// Ignore walls or nodes that are already visited
 			if (next->IsWall() || next->WasVisited())
 				continue;
 
@@ -184,5 +224,76 @@ void PathFinder::RouteBFS()
 	{
 		validVertexCounter = 0;
 		RouteBFS();
+	}
+}
+
+void PathFinder::RouteDFS()
+{
+	// Check if this algorithm has been interrupted while running
+	if (this->m_interrupted)
+	{
+		this->m_dfsTick->blockSignals(false);
+		this->m_dfsTick->stop();
+		this->m_interrupted = false;
+		Stop(nullptr); // Interrupt the search, pass in nullptr as the goal hasn't been found
+		return;
+	}
+
+	Vertex *next;
+	auto validVertexCounter = 0;
+	auto goalFound = false;
+
+	/*
+	 * Depth-First Search algorithm
+	 *
+	 * Pop a node off of the stack.
+	 * Get adjacent nodes and iterate over them and check if they're goals.
+	 * It not, push them onto the stack.
+	 */
+
+	if (!this->m_stack->isEmpty())
+	{
+		auto current = this->m_stack->pop();
+
+		const auto currentId = current->GetId();
+		auto neighbors = GetNeighbors(currentId);
+
+		while (!neighbors->isEmpty())
+		{
+			for (auto i = 0; i < neighbors->size(); i++)
+				next = neighbors->takeAt(i);
+
+			// Ignore walls and visited nodes
+			if (next->IsWall() || next->WasVisited())
+				continue;
+
+			validVertexCounter++;
+			next->SetPrevious(current);
+			this->m_stack->push(next);
+
+			if (next->IsGoal())
+			{
+				goalFound = true;
+				break;
+			}
+		}
+		current->SetVisited(true);
+
+		if (goalFound)
+			Stop(next); // Goal found
+	}
+	else
+	{
+		Stop(nullptr); // Goal NOT found
+		return;
+	}
+
+	// No vertex has been updated in current tick
+	if (validVertexCounter == 0)
+	{
+		validVertexCounter = 0;
+		this->m_dfsTick->stop();
+		RouteDFS();
+		this->m_dfsTick->start(TICK_RATE);
 	}
 }
