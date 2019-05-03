@@ -4,7 +4,7 @@
 #include <QElapsedTimer>
 #include <QQueue>
 
-#include "Node.h"
+#include "Vertex.h"
 
 // Tick-rate at which the algorithm runs
 #define TICK 5
@@ -13,12 +13,12 @@ class PathFinder : public QObject
 {
 	Q_OBJECT
 public:
-	explicit PathFinder(QHash<int, Node*> *listOfIds, int rows, int cols, QObject *parent = nullptr);
+	explicit PathFinder(QHash<int, Vertex*> *listOfIds, int rows, int cols, QObject *parent = nullptr);
 
 	// Sets the needed values for solving traversals
-	void Setup(QHash<int, Node*> *listOfIds, int rows, int cols);
+	void Setup(QHash<int, Vertex*> *listOfIds, int rows, int cols);
 
-	// Starts the BFS algorithm on the list of nodes
+	// Starts the BFS algorithm on the list of vertexs
 	void StartBreadthFirstSearch();
 
 	// Gets the time elapsed during search
@@ -27,17 +27,17 @@ public:
 	// Stops the algorithm, triggered from the UI
 	void TriggerInterrupt();
 protected:
-	// Gets the adjacent nodes which have not been visited
-	QList<Node*> *GetNeighborNodes(int id) const;
+	// Gets the adjacent vertexs which have not been visited
+	QList<Vertex*> *GetNeighbors(int id) const;
 
 	// Stops a algorithm
-	void Stop(Node *node);
+	void Stop(Vertex *vertex);
 private:
-	// Used to get nodes by ID
-	QHash<int, Node*> *m_hash;
+	// Used to get vertexs by ID
+	QHash<int, Vertex*> *m_hash;
 
 	// Queue for BFS
-	QQueue<Node*> *m_queue;
+	QQueue<Vertex*> *m_queue;
 
 	// Timer that triggers a step BFS algorithm
 	QTimer *m_bfsTick;
@@ -59,5 +59,5 @@ private slots:
 	void RouteBFS();
 signals:
 	// Display the path/goal
-	void DisplayGoal(Node *goal);
+	void DisplayGoal(Vertex *goal);
 };

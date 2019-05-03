@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 
-#include "Grid.h"
+#include "Graph.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,7 +25,7 @@ private:
     Ui::MainWindow *ui;
 
 	// Pointer to the grid GUI item
-    Grid *m_grid;
+    Graph *m_grid;
 
 	// Window height, width
     int m_windowHeight;
