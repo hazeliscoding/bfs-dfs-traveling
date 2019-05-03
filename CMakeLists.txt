@@ -7,14 +7,14 @@ find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 set(project_sources
     src/main.cpp
     src/MainWindow.cpp
-    src/Grid.cpp
-    src/Node.cpp
+    src/Graph.cpp
+    src/Vertex.cpp
 	src/PathFinder.cpp)
 
 set(project_headers
     include/MainWindow.h
-    include/Grid.h
-    include/Node.h
+    include/Graph.h
+    include/Vertex.h
 	include/PathFinder.h)
 
 set(project_ui

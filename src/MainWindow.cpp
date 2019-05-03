@@ -46,5 +46,5 @@ void MainWindow::InitUI()
     ui->tabWidget->setMouseTracking(true);
 
     // Initialize the grid
-    m_grid = new Grid(ui->tabWidget->widget(0));
+    m_grid = new Graph(ui->tabWidget->widget(0));
 }
