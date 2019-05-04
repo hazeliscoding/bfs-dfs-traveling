@@ -1,13 +1,9 @@
 # Traveling in BFS/DFS
-A fun and practical way to display Breadth-First Search and Depth-First Search with pathfinding on a grid for a school project. 
+A fun and practical way to demonstrate Breadth-First Search and Depth-First Search with pathfinding on a grid for a second semester Data Structures and Algorithms univeristy course as a final project.  
 
 ## Project Objectives
 
-- [x] Editing a graph
-- [x] Coloring a graph
-- [x] Breadth-First Search traversal
-- [x] Depth-First Search traversal
-- [ ] Determining the shortest path between two given nodes (NULL if no path is possible)
+To implement a graph data structure which can be edited, and traversed through with Breadth-First Search and Depth-First Search trversals. In this implementation, I have implemented a graph as a typical 2D grid which consists of cells, which are the vertices of this graph. Movement between cells can be represented as edges. Impassable cells (walls) are not part of the graph.
 
 ## Prerequisites
 * [CMake](https://cmake.org/)
