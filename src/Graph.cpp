@@ -1,7 +1,26 @@
 #include "Graph.h"
+#include <random>
+#include <array>
+
+namespace
+{
+	int random(const int a, const int b)
+	{
+		// Init RNG
+		std::array<int, std::mt19937::state_size> seed_data;
+		std::random_device r;
+		std::generate_n(seed_data.data(), seed_data.size(), std::ref(r));
+		std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
+		std::mt19937 generator(seq);
+
+		// Get random number
+		const std::uniform_int_distribution<int> dist(a, b);
+		return dist(generator);
+	}
+}
 
 Graph::Graph(QWidget *parent)
-	: QGraphicsView(parent), m_cellSizes(nullptr)
+	: QGraphicsView(parent), m_cellSizes(nullptr), m_currentlyTraveling(false)
 {
 	this->m_currentTab = parent;
 
@@ -147,40 +166,6 @@ void Graph::AddItemsToGroupBox(QGroupBox *groupBox)
 	connect(this->m_randomizeGraphButton, SIGNAL(clicked()), this, SLOT(Randomize()));
 }
 
-void Graph::AddItemsToScene() const
-{
-	const auto cols = this->m_sceneWidth / this->m_cellSize;
-    const auto rows = this->m_sceneHeight / this->m_cellSize;
-    auto i = 0;
-    auto j = 0;
-    auto idCount = 0;
-
-    // Traverse rows/cols
-    while (i <  rows)
-    {
-        while (j < cols)
-        {
-            // Get a new vertex
-            auto vertex = new Vertex(idCount, j * this->m_cellSize, i * this->m_cellSize, this->m_cellSize);
-            this->m_scene->addItem(vertex->GetShape());
-
-            // Insert vertices into hash tables
-            this->m_cellList->insert(vertex->GetShape(), vertex);
-            this->m_idList->insert(idCount, vertex);
-
-            // Set vertex descriptions for the smaller sizes
-            if (this->m_cellSize > this->m_vertexDescThreshold)
-                vertex->SetDescription();
-
-            j++;
-            idCount++;
-        }
-        j = 0;
-        i++;
-    }
-    SetStartAndGoal();
-}
-
 void Graph::SetStartAndGoal() const
 {
     this->m_idList->value(0)->SetStart(true);
@@ -220,9 +205,38 @@ void Graph::UpdateUiState()
 	this->m_randomizeGraphButton->setEnabled(!this->m_randomizeGraphButton->isEnabled());
 }
 
-void Graph::Render()
+void Graph::Render() const
 {
-    AddItemsToScene();
+	const auto cols = this->m_sceneWidth / this->m_cellSize;
+	const auto rows = this->m_sceneHeight / this->m_cellSize;
+	auto i = 0;
+	auto j = 0;
+	auto idCount = 0;
+
+	// Traverse rows/cols
+	while (i < rows)
+	{
+		while (j < cols)
+		{
+			// Get a new vertex
+			auto vertex = new Vertex(idCount, j * this->m_cellSize, i * this->m_cellSize, this->m_cellSize);
+			this->m_scene->addItem(vertex->GetShape());
+
+			// Insert vertices into hash tables
+			this->m_cellList->insert(vertex->GetShape(), vertex);
+			this->m_idList->insert(idCount, vertex);
+
+			// Set vertex descriptions for the smaller sizes
+			if (this->m_cellSize > this->m_vertexDescThreshold)
+				vertex->SetDescription();
+
+			j++;
+			idCount++;
+		}
+		j = 0;
+		i++;
+	}
+	SetStartAndGoal();
 }
 
 void Graph::NewSize()
@@ -238,7 +252,7 @@ void Graph::NewSize()
 
     this->m_cellList->clear();
     this->m_idList->clear();
-    AddItemsToScene();
+    Render();
     this->m_startTravelButton->setEnabled(true);
 }
 
@@ -270,7 +284,7 @@ void Graph::StopTraveling()
 	m_pathFinder->TriggerInterrupt();
 }
 
-void Graph::Reset()
+void Graph::Reset() const
 {
     for (auto& vertex : *this->m_cellList)
     {
@@ -292,7 +306,7 @@ void Graph::Reset()
 	this->m_startTravelButton->setEnabled(true);
 }
 
-void Graph::Clear()
+void Graph::Clear() const
 {
     for (auto& vertex : *this->m_cellList)
     {
@@ -311,14 +325,14 @@ void Graph::Clear()
 	this->m_startTravelButton->setEnabled(true);
 }
 
-void Graph::Randomize()
+void Graph::Randomize() const
 {
 	Clear();
 	for (auto vertex : *this->m_cellList)
 	{
 		if (!vertex->IsGoal() || !vertex->IsStart())
 		{
-			const auto heuristic = qrand() % 3; // Decides if it's a wall or not
+			const auto heuristic = random(0, 2); // Decides if it's a wall or not
 			if (heuristic >= 2)			
 				vertex->SetWall();			
 		}

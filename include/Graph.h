@@ -34,9 +34,6 @@ protected:
 	// Sets up the Graph group box
     void AddItemsToGroupBox(QGroupBox *groupBox);
 
-	// Adds the shapes from the vertices to the scene
-    void AddItemsToScene() const;
-
 	// Set the start and goal vertices
     void SetStartAndGoal() const;
 
@@ -44,13 +41,13 @@ protected:
     void SetDefaultSelections();
 
 	// Traces back a path from the exit (if it exists)
-	int TracePath(Vertex *lastVertex, QStack<int> *stack);
+    static int TracePath(Vertex *lastVertex, QStack<int> *stack);
 
 	// Switches UI elements on and off
 	void UpdateUiState();
 
 	// Draws the Graph
-    void Render();
+    void Render() const;
 private:
     // UI Objects
     QWidget *m_currentTab;
@@ -92,13 +89,13 @@ private slots:
     void StopTraveling();
 
 	// Resets Graph but leaves walls intact
-    void Reset();
+    void Reset() const;
 
 	// Resets Graph entirely
-    void Clear();
+    void Clear() const;
 
 	// Place random walls on Graph
-	void Randomize();
+	void Randomize() const;
 
 	// Displays the result of the search
 	void DisplayResults(Vertex *vertex);
