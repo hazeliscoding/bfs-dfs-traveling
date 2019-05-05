@@ -75,11 +75,15 @@ void Graph::CreateSizes()
 
 void Graph::mousePressEvent(QMouseEvent *me)
 {
+	// Do not process event during traversal
+	if (!m_currentlyTraveling)
+		return;
+
 	const auto current = itemAt(me->pos());
 
     if (current == nullptr)
         return;
-
+	
     auto selected = this->m_cellList->value(current);
 
     if (selected == nullptr)
@@ -203,6 +207,7 @@ void Graph::UpdateUiState()
 	this->m_algorithmSelection->setEnabled(!this->m_algorithmSelection->isEnabled());
 	this->m_clearGraphButton->setEnabled(!this->m_clearGraphButton->isEnabled());
 	this->m_randomizeGraphButton->setEnabled(!this->m_randomizeGraphButton->isEnabled());
+	this->m_currentlyTraveling = !this->m_currentlyTraveling;
 }
 
 void Graph::Render() const
@@ -258,6 +263,8 @@ void Graph::NewSize()
 
 void Graph::StartTraveling()
 {
+	this->m_currentlyTraveling = true;
+
 	UpdateUiState();
 	this->m_startTravelButton->setVisible(false);
 	this->m_stopTravelButton->setVisible(true);
@@ -279,6 +286,8 @@ void Graph::StartTraveling()
 
 void Graph::StopTraveling()
 {
+	this->m_currentlyTraveling = false;
+
 	m_stopTravelButton->setVisible(false);
 	m_startTravelButton->setEnabled(true);
 	m_pathFinder->TriggerInterrupt();

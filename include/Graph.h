@@ -78,6 +78,9 @@ private:
 
 	// Object for traversing the Graph
 	PathFinder *m_pathFinder;
+
+	// Flag to prevent wall set/un-setting during traversals
+	bool m_currentlyTraveling;
 private slots:
 	// Sets a new Graph size
     void NewSize();
