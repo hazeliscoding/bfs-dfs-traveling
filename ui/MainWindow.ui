@@ -55,9 +55,9 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="Grid">
+        <widget class="QWidget" name="Graph">
          <attribute name="title">
-          <string>Grid</string>
+          <string>Graph</string>
          </attribute>
         </widget>
        </widget>
