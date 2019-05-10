@@ -2,25 +2,8 @@
 #include <random>
 #include <array>
 
-namespace
-{
-	int random(const int a, const int b)
-	{
-		// Init RNG
-		std::array<int, std::mt19937::state_size> seed_data;
-		std::random_device r;
-		std::generate_n(seed_data.data(), seed_data.size(), std::ref(r));
-		std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
-		std::mt19937 generator(seq);
-
-		// Get random number
-		const std::uniform_int_distribution<int> dist(a, b);
-		return dist(generator);
-	}
-}
-
 Graph::Graph(QWidget *parent)
-	: QGraphicsView(parent), m_cellSizes(nullptr), m_currentlyTraveling(false)
+	: QGraphicsView(parent), m_currentlyTraveling(false)
 {
 	this->m_currentTab = parent;
 
@@ -29,15 +12,24 @@ Graph::Graph(QWidget *parent)
 	this->m_sceneWidth = 750;
 
 	// Load selectable Graph sizes
-	CreateSizes();
+	// Row 1: Visible number of squares
+	// Row 2: Size of squares
+	this->m_sizeList = SizeList{
+		{20, 150},
+		{80, 75},
+		{500, 30},
+		{2000, 15},
+		{4500, 10},
+		{18000, 5},
+	};
 
 	// Default values
-	this->m_cellSize = this->m_cellSizes[1][0];
-	this->m_vertexDescThreshold = this->m_cellSizes[1][2];
+	this->m_cellSize = this->m_sizeList[0].second;
+	this->m_vertexDescThreshold = this->m_sizeList[2].second;
 
 	// Data structures which hold pointers to all the vertices
-	this->m_cellList = new QHash<QGraphicsItem*, Vertex*>();
-	this->m_idList = new QHash<int, Vertex*>();
+	this->m_vertices = new QHash<QGraphicsItem*, Vertex*>();
+	this->m_vertexIdList = new QHash<int, Vertex*>();
 
 	InitUI();
 	SetDefaultSelections();
@@ -46,31 +38,8 @@ Graph::Graph(QWidget *parent)
 	// Initialize pathfinder
 	const auto cols = this->m_sceneWidth / this->m_cellSize;
 	const auto rows = this->m_sceneHeight / this->m_cellSize;
-	this->m_pathFinder = new PathFinder(this->m_idList, rows, cols);
+	this->m_pathFinder = new PathFinder(this->m_vertexIdList, rows, cols);
 	connect(this->m_pathFinder, SIGNAL(DisplayGoal(Vertex*)), this, SLOT(DisplayResults(Vertex*)));
-}
-
-void Graph::CreateSizes()
-{
-    // Row 1: Visible number of squares
-    // Row 2: Size of squares
-    this->m_cellSizes = new int*[2];
-    for (auto i = 0; i < 2; i++)
-        this->m_cellSizes[i] = new int[6];
-
-	this->m_cellSizes[0][0] = 20;
-	this->m_cellSizes[0][1] = 80;
-	this->m_cellSizes[0][2] = 500;
-	this->m_cellSizes[0][3] = 2000;
-	this->m_cellSizes[0][4] = 4500;
-	this->m_cellSizes[0][5] = 18000;
-
-	this->m_cellSizes[1][0] = 150;
-	this->m_cellSizes[1][1] = 75;
-	this->m_cellSizes[1][2] = 30;
-	this->m_cellSizes[1][3] = 15;
-	this->m_cellSizes[1][4] = 10;
-	this->m_cellSizes[1][5] = 5;
 }
 
 void Graph::mousePressEvent(QMouseEvent *me)
@@ -84,7 +53,7 @@ void Graph::mousePressEvent(QMouseEvent *me)
     if (current == nullptr)
         return;
 	
-    auto selected = this->m_cellList->value(current);
+    auto selected = this->m_vertices->value(current);
 
     if (selected == nullptr)
         return;
@@ -139,9 +108,9 @@ void Graph::AddItemsToGroupBox(QGroupBox *groupBox)
     // Display the possible sizes of the Graph to user
     const auto GraphSizeDesc = new QLabel("Graph Size");
     this->m_sizeSelection = new QComboBox();
-	for (auto i = 0; i < 6; i++)
+	for (auto& i : this->m_sizeList)
 	{
-		this->m_sizeSelection->addItem(QString::number(this->m_cellSizes[0][i]));
+		this->m_sizeSelection->addItem(QString::number(i.first));
 	}
     controlLayout->addRow(GraphSizeDesc, this->m_sizeSelection);
 
@@ -172,15 +141,15 @@ void Graph::AddItemsToGroupBox(QGroupBox *groupBox)
 
 void Graph::SetStartAndGoal() const
 {
-    this->m_idList->value(0)->SetStart(true);
-    this->m_idList->value(this->m_idList->size() - 1)->SetGoal(true);
+    this->m_vertexIdList->value(0)->SetStart(true);
+    this->m_vertexIdList->value(this->m_vertexIdList->size() - 1)->SetGoal(true);
 }
 
 void Graph::SetDefaultSelections()
 {
     // Set default Graph size
     this->m_sizeSelection->setCurrentIndex(1);
-    this->m_cellSize = this->m_cellSizes[1][this->m_sizeSelection->currentIndex()];
+    this->m_cellSize = this->m_sizeList[this->m_sizeSelection->currentIndex()].second;
 
     // Set default algorithm
     this->m_algorithmSelection->setCurrentIndex(1);
@@ -228,8 +197,8 @@ void Graph::Render() const
 			this->m_scene->addItem(vertex->GetShape());
 
 			// Insert vertices into hash tables
-			this->m_cellList->insert(vertex->GetShape(), vertex);
-			this->m_idList->insert(idCount, vertex);
+			this->m_vertices->insert(vertex->GetShape(), vertex);
+			this->m_vertexIdList->insert(idCount, vertex);
 
 			// Set vertex descriptions for the smaller sizes
 			if (this->m_cellSize > this->m_vertexDescThreshold)
@@ -246,17 +215,17 @@ void Graph::Render() const
 
 void Graph::NewSize()
 {
-    if (this->m_cellSize == this->m_cellSizes[1][this->m_sizeSelection->currentIndex()])
+    if (this->m_cellSize == this->m_sizeList[this->m_sizeSelection->currentIndex()].second)
         return;
 
-    this->m_cellSize = this->m_cellSizes[1][this->m_sizeSelection->currentIndex()];
+    this->m_cellSize = this->m_sizeList[this->m_sizeSelection->currentIndex()].second;
     this->m_scene->clear();
 
-    for (auto &vertex : *this->m_cellList)
+    for (auto &vertex : *this->m_vertices)
         delete vertex;
 
-    this->m_cellList->clear();
-    this->m_idList->clear();
+    this->m_vertices->clear();
+    this->m_vertexIdList->clear();
     Render();
     this->m_startTravelButton->setEnabled(true);
 }
@@ -272,7 +241,7 @@ void Graph::StartTraveling()
 	const auto cols = this->m_sceneWidth / this->m_cellSize;
 	const auto rows = this->m_sceneHeight / this->m_cellSize;
 
-	this->m_pathFinder->Setup(this->m_idList, rows, cols);
+	this->m_pathFinder->Setup(this->m_vertexIdList, rows, cols);
 
 	if (this->m_algorithmSelection->currentText() == "Depth-First Search")
 	{
@@ -295,7 +264,7 @@ void Graph::StopTraveling()
 
 void Graph::Reset() const
 {
-    for (auto& vertex : *this->m_cellList)
+    for (auto& vertex : *this->m_vertices)
     {
 	    if (!vertex->IsWall())
 	    {
@@ -317,7 +286,7 @@ void Graph::Reset() const
 
 void Graph::Clear() const
 {
-    for (auto& vertex : *this->m_cellList)
+    for (auto& vertex : *this->m_vertices)
     {
 		vertex->UnsetWall();
 		vertex->SetStart(false);
@@ -337,11 +306,11 @@ void Graph::Clear() const
 void Graph::Randomize() const
 {
 	Clear();
-	for (auto vertex : *this->m_cellList)
+	for (auto vertex : *this->m_vertices)
 	{
 		if (!vertex->IsGoal() || !vertex->IsStart())
 		{
-			const auto heuristic = random(0, 2); // Decides if it's a wall or not
+			const auto heuristic = rand() % 3; // Decides if it's a wall or not
 			if (heuristic >= 2)			
 				vertex->SetWall();			
 		}
