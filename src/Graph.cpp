@@ -12,8 +12,7 @@ Graph::Graph(QWidget *parent)
 	this->m_sceneWidth = 750;
 
 	// Load selectable Graph sizes
-	// Row 1: Visible number of squares
-	// Row 2: Size of squares
+	// { Visible number of squares, Size of squares }
 	this->m_sizeList = SizeList{
 		{20, 150},
 		{80, 75},
@@ -21,6 +20,7 @@ Graph::Graph(QWidget *parent)
 		{2000, 15},
 		{4500, 10},
 		{18000, 5},
+		{20000, 3}
 	};
 
 	// Default values
