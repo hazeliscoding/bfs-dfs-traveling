@@ -8,6 +8,11 @@
 #include <QBrush>
 #include <QDebug>
 
+class Vertex;
+
+using VertexHashShapeList = QHash<QGraphicsItem*, Vertex*>;
+using VertexHashIDList = QHash<int, Vertex*>;
+
 class Vertex
 {
 public:

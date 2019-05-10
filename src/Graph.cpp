@@ -13,14 +13,13 @@ Graph::Graph(QWidget *parent)
 
 	// Load selectable Graph sizes
 	// { Visible number of squares, Size of squares }
-	this->m_sizeList = SizeList{
+	this->m_sizeList = SizeList {
 		{20, 150},
 		{80, 75},
 		{500, 30},
 		{2000, 15},
 		{4500, 10},
 		{18000, 5},
-		{20000, 3}
 	};
 
 	// Default values
@@ -28,8 +27,8 @@ Graph::Graph(QWidget *parent)
 	this->m_vertexDescThreshold = this->m_sizeList[2].second;
 
 	// Data structures which hold pointers to all the vertices
-	this->m_vertices = new QHash<QGraphicsItem*, Vertex*>();
-	this->m_vertexIdList = new QHash<int, Vertex*>();
+	this->m_vertices = new VertexHashShapeList;
+	this->m_vertexIdList = new VertexHashIDList;
 
 	InitUI();
 	SetDefaultSelections();
