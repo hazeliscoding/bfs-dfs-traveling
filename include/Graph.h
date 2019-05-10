@@ -17,14 +17,15 @@
 #include "Vertex.h"
 #include "PathFinder.h"
 
+using SizeList = std::vector<std::pair<int, int>>;
+using VertexHashShapeList = QHash<QGraphicsItem*, Vertex*>;
+using VertexHashIDList = QHash<int, Vertex*>;
+
 class Graph final : public QGraphicsView
 {
     Q_OBJECT
 public:
     explicit Graph(QWidget *parent = nullptr);
-
-	// Creates an array of the different possible Graph sizes of N x N
-    void CreateSizes();
 public slots:
     void mousePressEvent(QMouseEvent *me) override;
 protected:
@@ -67,14 +68,14 @@ private:
     int m_sceneHeight;
     int m_sceneWidth;
     int m_cellSize;
-    int **m_cellSizes;
     int m_vertexDescThreshold;
+	SizeList m_sizeList;
 
 	// A hash list to lookup vertices by their rendered shape
-    QHash<QGraphicsItem*, Vertex*> *m_cellList;
+	VertexHashShapeList *m_vertices;
 
 	// A hash list to lookup vertices by their unique ID
-    QHash<int, Vertex*> *m_idList;
+	VertexHashIDList *m_vertexIdList;
 
 	// Object for traversing the Graph
 	PathFinder *m_pathFinder;

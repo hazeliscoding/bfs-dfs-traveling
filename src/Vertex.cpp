@@ -94,7 +94,7 @@ void Vertex::SetVisited(bool visited)
 
 	if (visited)
 	{
-		this->m_shape->setBrush(QBrush(Qt::green)); 
+		this->m_shape->setBrush(QBrush(QColor(135, 206, 250))); // Sky blue
 	}
 	else
 	{
@@ -119,6 +119,6 @@ void Vertex::UnsetWall()
 
 void Vertex::TracePath() const
 {
-	this->m_shape->setBrush(QBrush(Qt::magenta));
+	this->m_shape->setBrush(QBrush(Qt::yellow));
 }
 

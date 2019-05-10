@@ -8,7 +8,7 @@
 #include "Vertex.h"
 
 // Tick-rate at which the algorithm runs
-#define TICK_RATE 5
+#define TICK_RATE 1
 
 class PathFinder : public QObject
 {
