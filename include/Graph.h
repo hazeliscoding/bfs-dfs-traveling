@@ -18,8 +18,6 @@
 #include "PathFinder.h"
 
 using SizeList = std::vector<std::pair<int, int>>;
-using VertexHashShapeList = QHash<QGraphicsItem*, Vertex*>;
-using VertexHashIDList = QHash<int, Vertex*>;
 
 class Graph final : public QGraphicsView
 {
