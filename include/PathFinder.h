@@ -17,7 +17,7 @@ public:
 	explicit PathFinder(QHash<int, Vertex*> *listOfIds, int rows, int cols, QObject *parent = nullptr);
 
 	// Sets the needed values for solving traversals
-	void Setup(QHash<int, Vertex*> *listOfIds, int rows, int cols);
+	void Setup(VertexHashIDList *listOfIds, int rows, int cols);
 
 	// Starts the BFS algorithm on the list of vertices
 	void StartBreadthFirstSearch();
@@ -38,7 +38,7 @@ protected:
 	void Stop(Vertex *vertex);
 private:
 	// Used to get vertices by ID
-	QHash<int, Vertex*> *m_hash;
+	VertexHashIDList *m_hash;
 
 	// Queue for BFS
 	QQueue<Vertex*> *m_queue;

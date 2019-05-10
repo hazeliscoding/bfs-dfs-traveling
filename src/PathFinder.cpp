@@ -19,7 +19,7 @@ PathFinder::PathFinder(QHash<int, Vertex*>* listOfIds, const int rows, const int
 	connect(this->m_dfsTick, SIGNAL(timeout()), this, SLOT(RouteDFS()));
 }
 
-void PathFinder::Setup(QHash<int, Vertex*>* listOfIds, const int rows, const int cols)
+void PathFinder::Setup(VertexHashIDList *listOfIds, const int rows, const int cols)
 {
 	this->m_rows = rows;
 	this->m_cols = cols;
