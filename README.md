@@ -20,4 +20,5 @@ sudo apt-get install qtdeclarative5-dev
 ``` shell
 cd mkdir build && cd build
 cmake ..
+make
 ```
