@@ -9,6 +9,12 @@ To implement a graph data structure which can be edited, and traversed through w
 * [CMake](https://cmake.org/)
 * [Qt5](https://www.qt.io/)
 
+Also, make sure these packages are installed.
+```shell
+sudo apt-get install qtbase5-dev
+sudo apt-get install qtdeclarative5-dev
+```
+
 ## Building
 
 ``` shell
