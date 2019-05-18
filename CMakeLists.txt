@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.10)
 
 project(BFS-DFS-Traveling)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 set(project_sources
     src/main.cpp
